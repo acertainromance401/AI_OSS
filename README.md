@@ -37,3 +37,5 @@ AI학과 재학 중인 대학생, Python 기반 ML/딥러닝 실험과 데이터
 - 계산 결과는 `metrics/dora_metrics.json`으로 생성
 - GitHub Actions Artifact(`dora-metrics`)로 업로드
 - 주간 스케줄 실행 시 요약 보고서를 GitHub Issue로 자동 생성
+
+(본 레퍼지토리의 모든 내용은 AI로 작성하였음)
