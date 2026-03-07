@@ -1,0 +1,21 @@
+{
+  "generated_at": "2026-03-07T12:08:32.768659+00:00",
+  "period": {
+    "lookback_days": 7,
+    "since": "2026-02-28T12:08:32.768659+00:00",
+    "until": "2026-03-07T12:08:32.768659+00:00"
+  },
+  "repository": "acertainromance401/AI_OSS",
+  "dora_metrics": {
+    "lead_time_for_changes_hours_avg": null,
+    "deployment_frequency_per_week": 0,
+    "change_failure_rate_percent": null,
+    "mttr_hours_avg": null
+  },
+  "counts": {
+    "merged_prs": 0,
+    "total_deployments": 0,
+    "successful_deployments": 0,
+    "failed_deployments": 0
+  }
+}

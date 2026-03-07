@@ -1,5 +1,7 @@
 import json
 import os
+import re
+import subprocess
 from datetime import datetime, timedelta, timezone
 from urllib.request import Request, urlopen
 
@@ -8,18 +10,39 @@ def parse_iso8601(value: str) -> datetime:
     return datetime.fromisoformat(value.replace("Z", "+00:00"))
 
 
-def github_get(url: str, token: str):
+def infer_repository_from_git() -> str | None:
+    try:
+        remote_url = subprocess.check_output(
+            ["git", "config", "--get", "remote.origin.url"],
+            text=True,
+        ).strip()
+    except Exception:
+        return None
+
+    https_match = re.search(r"github\.com[/:]([^/]+)/([^/.]+)(?:\.git)?$", remote_url)
+    if https_match:
+        owner = https_match.group(1)
+        repo = https_match.group(2)
+        return f"{owner}/{repo}"
+    return None
+
+
+def github_get(url: str, token: str | None):
     req = Request(url)
     req.add_header("Accept", "application/vnd.github+json")
-    req.add_header("Authorization", f"Bearer {token}")
+    if token:
+        req.add_header("Authorization", f"Bearer {token}")
     req.add_header("X-GitHub-Api-Version", "2022-11-28")
     with urlopen(req) as response:
         return json.loads(response.read().decode("utf-8"))
 
 
 def main():
-    repository = os.environ["GITHUB_REPOSITORY"]
-    token = os.environ["GITHUB_TOKEN"]
+    repository = os.getenv("GITHUB_REPOSITORY") or infer_repository_from_git()
+    if not repository:
+        raise RuntimeError("GITHUB_REPOSITORY를 찾을 수 없습니다. 환경변수를 설정하거나 git remote.origin.url을 구성하세요.")
+
+    token = os.getenv("GITHUB_TOKEN")
     lookback_days = int(os.getenv("LOOKBACK_DAYS", "7"))
 
     now = datetime.now(timezone.utc)
