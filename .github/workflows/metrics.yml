@@ -11,6 +11,11 @@ jobs:
     if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
+      
+      - name: Calculate Cycle Time
+        run: python scripts/calculate_metrics.py
+      
       - name: Calculate Lead Time
         run: |
           FIRST_COMMIT_TIME="${{ github.event.pull_request.created_at }}"
