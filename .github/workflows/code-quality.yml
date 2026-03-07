@@ -1,1 +1,16 @@
+# .github/workflows/code-quality.yml
+name: Code Quality
 
+on: [push, pull_request]
+
+jobs:
+  sonarcloud:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          # SonarCloud 분석을 위한 전체 히스토리 가져오기
+          fetch-depth: 0
+
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@master
