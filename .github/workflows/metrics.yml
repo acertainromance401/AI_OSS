@@ -1,27 +1,88 @@
-# .github/workflows/metrics.yml
-name: Track Lead Time
+name: DORA Metrics Pipeline
 
 on:
   pull_request:
     types: [closed]
+  deployment_status:
+  schedule:
+    - cron: '0 0 * * 0'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+  issues: write
 
 jobs:
-  track-lead-time:
-    # PR이 병합되었을 때만 실행
-    if: github.event.pull_request.merged == true
+  collect-dora-metrics:
+    if: github.event_name != 'pull_request' || github.event.pull_request.merged == true
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v4
-      
-      - name: Calculate Cycle Time
-        run: python scripts/calculate_metrics.py
-      
-      - name: Calculate Lead Time
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Calculate DORA metrics
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          LOOKBACK_DAYS: 7
+        run: python scripts/collect_dora_metrics.py
+
+      - name: Upload DORA metrics artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: dora-metrics
+          path: metrics/dora_metrics.json
+
+      - name: Build weekly report
+        if: github.event_name == 'schedule'
         run: |
-          FIRST_COMMIT_TIME="${{ github.event.pull_request.created_at }}"
-          MERGE_TIME="${{ github.event.pull_request.merged_at }}"
-          
-          # 시간 차이 계산 (초 단위)
-          LEAD_TIME=$(($(date -d "$MERGE_TIME" +%s) - $(date -d "$FIRST_COMMIT_TIME" +%s)))
-          
-          echo "Lead Time: $LEAD_TIME seconds"
+          python - <<'PY'
+          import json
+
+          with open('metrics/dora_metrics.json', 'r', encoding='utf-8') as f:
+              data = json.load(f)
+
+          dora = data['dora_metrics']
+          counts = data['counts']
+
+            report = "\n".join([
+              "## Weekly DORA Metrics Report",
+              "",
+              f"- Lead Time (avg, hours): {dora['lead_time_for_changes_hours_avg']}",
+              f"- Deployment Frequency (weekly): {dora['deployment_frequency_per_week']}",
+              f"- MTTR (avg, hours): {dora['mttr_hours_avg']}",
+              f"- Change Failure Rate (%): {dora['change_failure_rate_percent']}",
+              "",
+              "### Raw Counts",
+              f"- Merged PRs: {counts['merged_prs']}",
+              f"- Total Deployments: {counts['total_deployments']}",
+              f"- Successful Deployments: {counts['successful_deployments']}",
+              f"- Failed Deployments: {counts['failed_deployments']}",
+              "",
+            ])
+
+          with open('metrics/weekly_report.md', 'w', encoding='utf-8') as f:
+              f.write(report)
+          PY
+
+      - name: Create weekly report issue
+        if: github.event_name == 'schedule'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const body = fs.readFileSync('metrics/weekly_report.md', 'utf8');
+            const today = new Date().toISOString().slice(0, 10);
+
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `[Weekly DORA] ${today}`,
+              body
+            });
