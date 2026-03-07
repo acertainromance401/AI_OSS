@@ -38,6 +38,8 @@ jobs:
         with:
           name: dora-metrics
           path: metrics/dora_metrics.json
+          if-no-files-found: error
+          retention-days: 30
 
       - name: Build weekly report
         if: github.event_name == 'schedule'
@@ -51,7 +53,7 @@ jobs:
           dora = data['dora_metrics']
           counts = data['counts']
 
-            report = "\n".join([
+          report = "\n".join([
               "## Weekly DORA Metrics Report",
               "",
               f"- Lead Time (avg, hours): {dora['lead_time_for_changes_hours_avg']}",
