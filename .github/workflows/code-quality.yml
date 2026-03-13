@@ -13,7 +13,7 @@ jobs:
           fetch-depth: 0
 
       - name: SonarCloud Scan
-        uses: SonarSource/sonarcloud-github-action@master
+        uses: SonarSource/sonarcloud-github-action@v2
 
       - name: Measure Code Churn
         run: bash scripts/measure_churn.sh

@@ -8,6 +8,60 @@ AI학과 재학 중인 대학생, Python 기반 ML/딥러닝 실험과 데이터
 ## Project
 자세한 프로젝트 내용은 [Project_Proposal.txt](Project_Proposal.txt)를 참고하세요.
 
+## Backend API (FastAPI)
+
+### 1. 설치
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+```
+
+### 2. 실행
+
+```bash
+# first time only
+cp .env.example .env
+
+uvicorn api.main:app --reload --host 0.0.0.0 --port 8000
+```
+
+### 3. 주요 엔드포인트
+
+- `GET /health`: 서버 상태 확인
+- `POST /analyze`: 색상 팔레트 기반 감정 분석
+- `POST /feedback`: 사용자 피드백 저장 (`data/feedback.csv`)
+
+### 3-1. 분석 데이터셋 파일
+
+- `data/color_emotion_labeled_updated.csv`
+- `data/colorassociations_warmth - colorwarmth.csv`
+
+`POST /analyze`는 위 두 CSV를 로드해 최근접 색상 기반으로 감정 점수를 계산합니다.
+
+주의: 위 CSV는 라이선스/재배포 확인 전까지 저장소에 커밋하지 않도록 설정되어 있습니다.
+로컬 테스트 시에는 본인 데이터 파일을 `data/` 폴더에 직접 배치하세요.
+
+### 4. 분석 요청 예시
+
+```json
+{
+	"palette": [
+		{ "r": 255, "g": 120, "b": 80 },
+		{ "r": 40, "g": 80, "b": 190 }
+	],
+	"weights": [0.7, 0.3]
+}
+```
+
+Swagger 문서: `http://localhost:8000/docs`
+
+## Security and Compliance Notes
+
+- Docker/Grafana admin password is read from environment variables (`.env.example` 참고).
+- Dataset redistribution/license details are tracked in `data/DATA_LICENSE.txt`.
+
 ## DORA Metrics 수집 자동화 구현 방법(간단)
 
 1. `.github/workflows/metrics.yml`에서 DORA 파이프라인을 구성했습니다.
