@@ -209,3 +209,91 @@ P1
 P2
 - 감정 시각화 고도화(상세 차트)
 - 개인화 추천 메시지
+
+---
+
+## 6. 시각자료 버전 (Mermaid)
+
+아래 다이어그램은 PRD/WBS 공유 문서나 발표 자료에 바로 붙여 넣을 수 있는 시각화 버전입니다.
+
+### 6.1 화면 전환 플로우
+
+```mermaid
+flowchart LR
+	A[Home] --> B[Canvas]
+	B --> C[Result]
+	C --> D[Feedback]
+	C --> E[History]
+	D --> C
+	E --> A
+```
+
+### 6.2 정보 구조 (IA)
+
+```mermaid
+flowchart TB
+	App[SentiVision iOS]
+	App --> H[Home]
+	App --> C[Canvas]
+	App --> R[Result]
+	App --> F[Feedback]
+	App --> Y[History]
+
+	H --> H1[새 그림 시작]
+	H --> H2[최근 분석 요약]
+	H --> H3[분석 기록 보기]
+
+	C --> C1[툴바: 펜/지우개/색상/되돌리기/초기화]
+	C --> C2[드로잉 캔버스]
+	C --> C3[선택 색상/추출 팔레트]
+	C --> C4[분석하기]
+
+	R --> R1[예측 감정 + 신뢰도]
+	R --> R2[감정 점수 분포]
+	R --> R3[대표 색상 스와치]
+	R --> R4[결과 저장/피드백]
+
+	F --> F1[실제 감정 선택]
+	F --> F2[메모 입력]
+	F --> F3[피드백 제출]
+
+	Y --> Y1[검색/필터]
+	Y --> Y2[예측 vs 수정 감정]
+	Y --> Y3[대표 색상 로그]
+```
+
+### 6.3 핵심 사용자 여정
+
+```mermaid
+journey
+	title SentiVision 핵심 사용자 여정
+	section 생성
+		앱 실행 후 홈 진입: 5: User
+		새 그림 시작 탭: 5: User
+		캔버스에 드로잉: 4: User
+	section 분석
+		분석하기 요청: 5: User
+		감정 예측 결과 확인: 4: User
+		대표 색상 확인: 4: User
+	section 개선
+		실제 감정으로 피드백 입력: 4: User
+		피드백 제출 완료: 5: User
+	section 회고
+		기록 화면에서 과거 결과 조회: 4: User
+```
+
+### 6.4 상태/예외 플로우
+
+```mermaid
+stateDiagram-v2
+	[*] --> Idle
+	Idle --> Drawing: 새 그림 시작
+	Drawing --> Analyzing: 분석하기
+	Analyzing --> Result: 성공
+	Analyzing --> AnalyzeError: 실패
+	Result --> Feedback: 피드백 보내기
+	Feedback --> FeedbackDone: 제출 성공
+	FeedbackDone --> Result
+	AnalyzeError --> Drawing: 다시 시도
+	Result --> History: 결과 저장/기록 보기
+```
