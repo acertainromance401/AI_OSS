@@ -8,6 +8,12 @@ AI학과 재학 중인 대학생, Python 기반 ML/딥러닝 실험과 데이터
 ## Project
 자세한 프로젝트 내용은 [Project_Proposal.txt](Project_Proposal.txt)를 참고하세요.
 
+## Swift Canvas Prototype
+
+- 위치: `ios/CanvasDrawingPrototype.playground`
+- Xcode 또는 Swift Playgrounds에서 playground를 열면 캔버스 드로잉 UI를 바로 확인할 수 있습니다.
+- 포함 기능: 자유 드로잉, 색상 선택, 브러시 두께 조절, Undo, Clear
+
 ## Backend API (FastAPI)
 
 ### 1. 설치

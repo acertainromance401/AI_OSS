@@ -30,6 +30,11 @@ build/
 coverage/
 htmlcov/
 
+# Xcode playground generated workspace metadata
+*.playground/playground.xcworkspace/
+ios/*.playground/playground.xcworkspace/
+*.xcuserstate
+
 # Dataset files (license review pending)
 data/*.csv
 !data/DATA_LICENSE.txt
