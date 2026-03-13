@@ -1,0 +1,21 @@
+# .github/workflows/labeler.yml
+# PR에서 변경된 파일 경로에 따라 Label을 자동으로 지정하는 GitHub Actions 워크플로우
+name: PR Auto Labeler
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  label:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - name: Auto Label PR by Changed Files
+        uses: actions/labeler@v5
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          configuration-path: .github/labeler.yml
+          sync-labels: false

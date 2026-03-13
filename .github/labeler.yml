@@ -1,0 +1,46 @@
+# .github/labeler.yml
+# PR에서 변경된 파일 경로에 따라 자동으로 Label을 지정하는 설정 파일
+
+'CI/CD':
+  - changed-files:
+    - any-glob-to-any-file: '.github/workflows/**'
+
+'documentation':
+  - changed-files:
+    - any-glob-to-any-file:
+      - '**/*.md'
+      - '**/*.txt'
+      - 'README*'
+      - 'LICENSE*'
+
+'scripts':
+  - changed-files:
+    - any-glob-to-any-file: 'scripts/**'
+
+'metrics':
+  - changed-files:
+    - any-glob-to-any-file: 'metrics/**'
+
+'docker':
+  - changed-files:
+    - any-glob-to-any-file:
+      - 'docker-compose.yml'
+      - 'Dockerfile'
+      - '**/Dockerfile*'
+      - '**/.dockerignore'
+
+'monitoring':
+  - changed-files:
+    - any-glob-to-any-file:
+      - 'prometheus.yml'
+      - '**/prometheus*.yml'
+      - '**/grafana/**'
+
+'configuration':
+  - changed-files:
+    - any-glob-to-any-file:
+      - '*.json'
+      - '*.env*'
+      - '*.ini'
+      - '*.toml'
+      - '*.cfg'
